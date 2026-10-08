@@ -1,0 +1,31 @@
+# Java 17 - Sybase ASE -> Oracle migration
+
+# JDBC drivers
+sybase.driver=com.sybase.jdbc4.jdbc.SybDriver
+oracle.driver=oracle.jdbc.OracleDriver
+
+# Connections
+sybase.url=jdbc:sybase:Tds:SYBASE_HOST:5000/DB_NAME
+sybase.user=YOUR_SYBASE_USER
+sybase.password=YOUR_SYBASE_PASSWORD
+
+oracle.url=jdbc:oracle:thin:@//ORACLE_HOST:1521/SERVICE_NAME
+oracle.user=YOUR_ORACLE_USER
+oracle.password=YOUR_ORACLE_PASSWORD
+
+# Performance
+migration.batchSize=1000
+migration.rangeSize=10000
+migration.fetchSize=1000
+migration.commitEveryBatches=10
+
+# true = analyse only, no INSERT
+migration.checkOnly=false
+
+# On first run, false is safer. When true, Oracle target table is not truncated;
+# existing rows can cause PK/UK errors unless resume/state or filtering is used.
+migration.doNotTruncate=true
+
+# State and logs
+migration.stateDirectory=state
+migration.logDirectory=logs
