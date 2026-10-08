@@ -1,0 +1,4 @@
+# sourceSchema,sourceTable,targetSchema,targetTable,idColumn,enabled
+# idColumn may be empty: the program will use the FIRST source column.
+dbo,CDX_ADM_LOG_EXTRACT_DOC,REPORTING,CDX_ADM_LOG_EXTRACT_DOC,,true
+# dbo,ECL_lienHeritage,REPORTING,ECL_LIENHERITAGE,,true

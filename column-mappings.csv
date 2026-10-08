@@ -1,0 +1,5 @@
+# sourceTable,sourceColumn,targetColumn,sourceTypeOverride
+# Optional. Leave empty to map columns by name, case-insensitively.
+# sourceTypeOverride is useful for ASE timestamp when a driver exposes it as BINARY/VARBINARY.
+# Example:
+# CDX_ADM_LOG_EXTRACT_DOC,ts_col,TS_COL,timestamp

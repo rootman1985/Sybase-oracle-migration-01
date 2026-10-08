@@ -1,0 +1,28 @@
+-- Source: Sybase ASE example from the provided table.
+-- Destination: Oracle example.
+--
+-- Important for ASE timestamp:
+-- source timestamp is an 8-byte binary/version value.
+-- target should be RAW(8) if that is your Oracle model.
+
+-- Sybase:
+-- CREATE TABLE bfond.dbo.CDX_ADM_LOG_EXTRACT_DOC (
+--   IdLog numeric(18,0) NOT NULL IDENTITY(1,1),
+--   IdDocument int NOT NULL,
+--   IdCanalDiffusion varchar(40) NOT NULL,
+--   login varchar(12) NOT NULL,
+--   DateExtraction datetime NOT NULL,
+--   IdTypeExtract tinyint NOT NULL,
+--   FormatConfigVersion varchar(16) NOT NULL,
+--   IdStatut char(8) NOT NULL,
+--   IdRequest int NULL,
+--   ExtractResult tinyint NULL,
+--   DateResult datetime NULL,
+--   Handled tinyint NULL,
+--   DateHandled datetime NULL,
+--   LoginHandled varchar(12) NULL,
+--   histo_flag char(1) DEFAULT 'N' NOT NULL
+-- );
+
+-- Oracle:
+-- CREATE TABLE REPORTING.CDX_ADM_LOG_EXTRACT_DOC (...);
