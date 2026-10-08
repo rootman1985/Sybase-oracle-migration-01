@@ -1,0 +1,4 @@
+@echo off
+mvn -q package
+java -cp "target/classes;lib/*" com.example.migrator.MigrationApplication MIGRATE
+pause
