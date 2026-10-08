@@ -1,0 +1,97 @@
+public List<ColumnInfo> readOracleColumns(
+        Connection c,
+        String schema,
+        String table) throws SQLException {
+
+    List<ColumnInfo> result = new ArrayList<>();
+
+    String sql = """
+        SELECT
+            COLUMN_NAME,
+            DATA_TYPE,
+            DATA_LENGTH,
+            DATA_PRECISION,
+            DATA_SCALE,
+            COLUMN_ID,
+            NULLABLE,
+            CHAR_LENGTH
+        FROM ALL_TAB_COLUMNS
+        WHERE OWNER = ?
+          AND TABLE_NAME = ?
+        ORDER BY COLUMN_ID
+        """;
+
+    try (PreparedStatement ps = c.prepareStatement(sql)) {
+
+        ps.setString(1, schema.toUpperCase(Locale.ROOT));
+        ps.setString(2, table.toUpperCase(Locale.ROOT));
+
+        try (ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                String columnName = rs.getString("COLUMN_NAME");
+                String dataType = rs.getString("DATA_TYPE");
+
+                int columnSize;
+
+                if ("NUMBER".equalsIgnoreCase(dataType)) {
+                    Integer precision = (Integer) rs.getObject("DATA_PRECISION");
+                    columnSize = precision != null ? precision : 0;
+
+                } else if ("VARCHAR2".equalsIgnoreCase(dataType)
+                        || "CHAR".equalsIgnoreCase(dataType)) {
+
+                    columnSize = rs.getInt("CHAR_LENGTH");
+
+                } else {
+                    columnSize = rs.getInt("DATA_LENGTH");
+                }
+
+                int decimalDigits = 0;
+
+                Object scaleObject = rs.getObject("DATA_SCALE");
+                if (scaleObject != null) {
+                    decimalDigits = ((Number) scaleObject).intValue();
+                }
+
+                int ordinal = rs.getInt("COLUMN_ID");
+
+                boolean nullable =
+                        "Y".equalsIgnoreCase(rs.getString("NULLABLE"));
+
+                // java.sql.Types correspondant au type Oracle
+                int jdbcType = switch (dataType.toUpperCase(Locale.ROOT)) {
+                    case "NUMBER" -> java.sql.Types.NUMERIC;
+                    case "VARCHAR2" -> java.sql.Types.VARCHAR;
+                    case "CHAR" -> java.sql.Types.CHAR;
+                    case "DATE" -> java.sql.Types.DATE;
+                    case "TIMESTAMP" -> java.sql.Types.TIMESTAMP;
+                    case "RAW" -> java.sql.Types.BINARY;
+                    case "CLOB" -> java.sql.Types.CLOB;
+                    case "BLOB" -> java.sql.Types.BLOB;
+                    default -> java.sql.Types.OTHER;
+                };
+
+                result.add(new ColumnInfo(
+                        columnName,
+                        jdbcType,
+                        dataType,
+                        columnSize,
+                        decimalDigits,
+                        ordinal,
+                        nullable
+                ));
+            }
+        }
+    }
+
+    if (result.isEmpty()) {
+        throw new SQLException(
+                "No columns found for "
+                + schema + "." + table
+        );
+    }
+
+    return result;
+}
